@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace TestWebApplication
+namespace DocumentDBDataService
 {
     public class User
     {
@@ -11,8 +11,11 @@ namespace TestWebApplication
         public string Email { get; set; }
         public string Password { get; set; }
         public string DisplayName { get; set; }
+        public UserPicture ProfilePicture { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+        public string CreatedDate { get; set; }
+        public UserPreferences Preferences { get; set; }
     }
 
     public class DBUser
@@ -24,5 +27,7 @@ namespace TestWebApplication
         public string ZipCode { get; set; }
         public string Country { get; set; }
         public string UserProfilePictureBlob { get; set; }
+        public string CreatedDate { get; set; }
+        public UserPreferences Preferences { get; set; }
     }
 }

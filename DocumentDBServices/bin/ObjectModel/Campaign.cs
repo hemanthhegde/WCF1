@@ -5,7 +5,7 @@ using System.Web;
 
 namespace DocumentDBDataService
 {
-    public enum StoryCategory
+    public enum CampaignCategory
     {
         Environmental,
         Social,
@@ -14,21 +14,18 @@ namespace DocumentDBDataService
         Local
     }
 
-    public class Story
+    public enum CampaignStatus
     {
-        public string CreatedDate { get; set; }
-        public string OwnerId { get; set; }
-        public string Heading { get; set; }
-        public string Category { get; set; }
-        public StoryMedia StoryVisualResource { get; set; }
-        public string Message { get; set; }
-        public bool IsLocal { get; set; }
-        public string ZipCode { get; set; }
-        public string Country { get; set; }
-        public string[] KeyWords { get; set; }
+        Completed,
+        InProgress,
+        OnHold,
+        Active,
+        Suspended,
+        Cancelled,
+        Flagged
     }
 
-    public class DBStory
+    public class CampaignBase
     {
         public string CreatedDate { get; set; }
         public string OwnerId { get; set; }
@@ -39,6 +36,20 @@ namespace DocumentDBDataService
         public string ZipCode { get; set; }
         public string Country { get; set; }
         public string[] KeyWords { get; set; }
+        public string LastUpdatedDate { get; set; }
+        public int CommentsCount { get; set; }
+        public int participationCount { get; set; }
+        public List<string> Events { get; set; }
+        public CampaignStatus Status { get; set; }
+    }
+
+    public class Campaign : CampaignBase
+    {
+        public CampaignMedia CampaignVisualResource { get; set; }
+    }
+
+    public class DBCampaign : CampaignBase
+    {
         public string StoryMediaResourceBlob { get; set; }
     }
 }

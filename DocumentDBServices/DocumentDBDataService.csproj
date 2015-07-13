@@ -93,46 +93,93 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ActiDataService.svc" />
+    <Content Include="ActiDataService.svc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiDataService.svc.cs">
       <DependentUpon>ActiDataService.svc</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="DocumentDB\DocumentDBConnector.cs" />
-    <Compile Include="HttpMultipartParser\BinaryStreamStack.cs.cs" />
-    <Compile Include="HttpMultipartParser\FilePart.cs" />
-    <Compile Include="HttpMultipartParser\MultipartFoemDataParser.cs" />
-    <Compile Include="HttpMultipartParser\MultipartParseException.cs" />
-    <Compile Include="HttpMultipartParser\ParameterPart.cs" />
-    <Compile Include="HttpMultipartParser\RebufferableBinaryReader.cs" />
-    <Compile Include="HttpMultipartParser\StreamingMultipartFormDataParser.cs" />
-    <Compile Include="HttpMultipartParser\SubsequenceFinder.cs" />
-    <Compile Include="IActiDataService.cs" />
-    <Compile Include="ObjectModel\Constants.cs" />
-    <Compile Include="ObjectModel\Story.cs" />
-    <Compile Include="ObjectModel\User.cs" />
+    <Compile Include="DocumentDB\DocumentDBConnector.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\BinaryStreamStack.cs.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\FilePart.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\MultipartFoemDataParser.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\MultipartParseException.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\ParameterPart.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\RebufferableBinaryReader.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\StreamingMultipartFormDataParser.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HttpMultipartParser\SubsequenceFinder.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="IActiDataService.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\Comment.cs" />
+    <Compile Include="ObjectModel\Constants.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\Campaign.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\Event.cs" />
+    <Compile Include="ObjectModel\User.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\UserPreferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestData.cs" />
-    <Compile Include="ResponseData.cs.cs" />
-    <Compile Include="StorageConnector.cs" />
-    <Compile Include="ObjectModel\StoryMedia.cs" />
-    <Compile Include="ObjectModel\UserPicture.cs" />
+    <Compile Include="RequestData.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ResponseData.cs.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="StorageConnector.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\CampaignMedia.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="ObjectModel\UserPicture.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\acty.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <PropertyGroup>

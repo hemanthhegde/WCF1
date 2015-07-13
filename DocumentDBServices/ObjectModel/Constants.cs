@@ -9,7 +9,6 @@ namespace DocumentDBDataService
     {
         // Stories keys
         public const string OwnerIdKey = "OwnerId";
-        public const string CreatedDateKey = "CreatedDate";
         public const string HeadingKey = "Heading";
         public const string CategoryKey = "Category";
         public const string MessageKey = "Message";
@@ -23,6 +22,7 @@ namespace DocumentDBDataService
         public const string DisplayNameKey = "DisplayName";
         public const string ZipCodeKey = "ZipCode";
         public const string CountryKey = "Country";
+        public const string UserPreferencesKey = "Preferences";
 
         // Common Keys
         public const string UserIdKey = "UserId";
@@ -30,6 +30,7 @@ namespace DocumentDBDataService
         public const string FileNameKey = "FileName";
         public const string ContentTypeKey = "ContentType";
         public const string ContentLengthKey = "ContentLength";
+        public const string CreatedDateKey = "CreatedDate";
 
         // StorageBD constants
         public const string UserProfilePictureBlobKey = "UserProfilePictureBlob";

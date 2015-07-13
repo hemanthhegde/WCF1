@@ -18,8 +18,8 @@ namespace TestWebApplication
             bool retVal = false;
             try
             {
-                //string url = "http://localhost:62584/ActiDataService.svc/CreateUserProfile";
-                string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateUserProfile";
+                string url = "http://localhost:62584/ActiDataService.svc/CreateUserProfile";
+                //string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateUserProfile";
                 // declare ascii encoding
                 ASCIIEncoding encoding = new ASCIIEncoding();
                 string strResult = string.Empty;
@@ -63,13 +63,63 @@ namespace TestWebApplication
             return retVal;
         }
 
-        public bool CreateStoryInDB(Story story)
+        public bool UpdateUserPreference(User user, bool isAdd)
         {
             bool retVal = false;
             try
             {
-                //string url = "http://localhost:62584/ActiDataService.svc/CreateStory";
-                string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateStory";
+                string url = isAdd ? "http://localhost:62584/ActiDataService.svc/AddUserPreference" : "http://localhost:62584/ActiDataService.svc/RemoveUserPreference";
+                //string url = isAdd ? "http://acty.azurewebsites.net/ActiDataService.svc/AddUserPreference" : "http://acty.azurewebsites.net/ActiDataService.svc/RemoveUserPreference";
+                // declare ascii encoding
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                string strResult = string.Empty;
+
+                string postData = JsonConvert.SerializeObject(user);
+                // convert xmlstring to byte using ascii encoding
+                byte[] data = encoding.GetBytes(postData);
+                // declare httpwebrequet wrt url defined above
+                HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
+                // set method as post
+                webrequest.Method = "POST";
+                // set content type
+                webrequest.ContentType = "application/x-www-form-urlencoded";
+                // set content length
+                webrequest.ContentLength = data.Length;
+                // get stream data out of webrequest object
+                Stream newStream = webrequest.GetRequestStream();
+                newStream.Write(data, 0, data.Length);
+                newStream.Close();
+                // declare & read response from service
+                HttpWebResponse webresponse = (HttpWebResponse)webrequest.GetResponse();
+
+                // set utf8 encoding
+                Encoding enc = System.Text.Encoding.GetEncoding("utf-8");
+                // read response stream from response object
+                StreamReader loResponseStream = new StreamReader(webresponse.GetResponseStream(), enc);
+                // read string from stream data
+                strResult = loResponseStream.ReadToEnd();
+                // close the stream object
+                loResponseStream.Close();
+                // close the response object
+                webresponse.Close();
+
+                retVal = strResult == "true";
+            }
+            catch (Exception ex)
+            {
+                retVal = ex.Message != string.Empty;
+            }
+
+            return retVal;
+        }
+
+        public bool CreateStoryInDB(Campaign story)
+        {
+            bool retVal = false;
+            try
+            {
+                string url = "http://localhost:62584/ActiDataService.svc/CreateCampaign";
+                //string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateCampaign";
 
                 // declare ascii encoding
                 ASCIIEncoding encoding = new ASCIIEncoding();
@@ -120,8 +170,8 @@ namespace TestWebApplication
             try
             {
                 // Restful service URL
-                //string url = string.Format("http://localhost:62584/ActiDataService.svc/IsUserNameAvailable/userName/{0}", userName);
-                string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/IsUserNameAvailable/userName/{0}", userName);
+                string url = string.Format("http://localhost:62584/ActiDataService.svc/IsUserNameAvailable/userName/{0}", userName);
+                //string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/IsUserNameAvailable/userName/{0}", userName);
                 string strResult = string.Empty;
                 // declare httpwebrequet wrt url defined above
                 HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
@@ -158,8 +208,8 @@ namespace TestWebApplication
             try
             {
                 // Restful service URL
-                //string url = string.Format("http://localhost:62584/ActiDataService.svc/GetUser/userName/{0}", userName);
-                string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/GetUser/userName/{0}", userName);
+                string url = string.Format("http://localhost:62584/ActiDataService.svc/GetUser/userName/{0}", userName);
+                //string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/GetUser/userName/{0}", userName);
                 string strResult = string.Empty;
                 // declare httpwebrequet wrt url defined above
                 HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
@@ -190,14 +240,14 @@ namespace TestWebApplication
             return retVal;
         }
 
-        public IEnumerable<DBStory> GetStoriesForUser(string userName)
+        public IEnumerable<DBStory> GetCampaignsForUser(string userName)
         {
             IEnumerable<DBStory> retVal = null;
             try
             {
                 // Restful service URL
-                //string url = string.Format("http://localhost:62584/ActiDataService.svc/GetStoriesForUser/userName/{0}", userName);
-                string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/GetStoriesForUser/userName/{0}", userName);
+                string url = string.Format("http://localhost:62584/ActiDataService.svc/GetCampaignsForUser/userName/{0}", userName);
+                //string url = string.Format("http://acty.azurewebsites.net/ActiDataService.svc/GetCampaignsForUser/userName/{0}", userName);
                 string strResult = string.Empty;
                 // declare httpwebrequet wrt url defined above
                 HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
@@ -233,8 +283,8 @@ namespace TestWebApplication
             bool retVal = false;
             try
             {
-                //string url = "http://localhost:62584/ActiDataService.svc/UpdateUserPicture";
-                string url = "http://acty.azurewebsites.net/ActiDataService.svc/UpdateUserPicture";
+                string url = "http://localhost:62584/ActiDataService.svc/UpdateUserPicture";
+                //string url = "http://acty.azurewebsites.net/ActiDataService.svc/UpdateUserPicture";
 
                 // declare ascii encoding
                 ASCIIEncoding encoding = new ASCIIEncoding();
@@ -283,8 +333,8 @@ namespace TestWebApplication
             bool retVal = false;
             try
             {
-                //string url = "http://localhost:62584/ActiDataService.svc/UpdateUserPicture";
-                string url = "http://acty.azurewebsites.net/ActiDataService.svc/UpdateUserPicture";
+                string url = "http://localhost:62584/ActiDataService.svc/UpdateUserPicture";
+                //string url = "http://acty.azurewebsites.net/ActiDataService.svc/UpdateUserPicture";
 
                 // Generate post objects
                 Dictionary<string, object> postParameters = new Dictionary<string, object>();
@@ -309,13 +359,13 @@ namespace TestWebApplication
             return retVal;
         }
 
-        public bool CreateStory_MultiPartFormData(Story story)
+        public bool CreateStory_MultiPartFormData(Campaign story)
         {
             bool retVal = false;
             try
             {
-                //string url = "http://localhost:62584/ActiDataService.svc/CreateStory";
-                string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateStory";
+                string url = "http://localhost:62584/ActiDataService.svc/CreateCampaign";
+                //string url = "http://acty.azurewebsites.net/ActiDataService.svc/CreateCampaign";
 
                 // Generate post objects
                 Dictionary<string, object> postParameters = new Dictionary<string, object>();

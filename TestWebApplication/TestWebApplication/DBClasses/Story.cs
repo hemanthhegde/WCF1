@@ -5,7 +5,7 @@ using System.Web;
 
 namespace TestWebApplication
 {
-    public enum StoryCategory
+    public enum CampaignCategory
     {
         Environmental,
         Social,
@@ -14,7 +14,7 @@ namespace TestWebApplication
         Local
     }
 
-    public class StoryMedia
+    public class CampaignMedia
     {
         public string UserId { get; set; }
         public byte[] Data { get; set; }
@@ -23,13 +23,13 @@ namespace TestWebApplication
         public int ContentLength { get; set; }
     }
 
-    public class Story
+    public class Campaign
     {
         public string CreatedDate { get; set; }
         public string OwnerId { get; set; }
         public string Heading { get; set; }
         public string Category { get; set; }
-        public StoryMedia StoryVisualResource { get; set; }
+        public CampaignMedia StoryVisualResource { get; set; }
         public string Message { get; set; }
         public bool IsLocal { get; set; }
         public string ZipCode { get; set; }

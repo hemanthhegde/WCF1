@@ -55,7 +55,30 @@ namespace DocumentDBDataService
             return false;
         }
 
-        public bool CreateStory(Stream data)
+        public bool AddUserPreference(Stream data)
+        {
+            // convert Stream Data to StreamReader
+            StreamReader reader = new StreamReader(data);
+            // Read StreamReader data as string
+            string jsonString = reader.ReadToEnd();
+            User userObj = JsonConvert.DeserializeObject<User>(jsonString);
+            var userAdded = DocumentDBConnector.UpdateUserPreference(userObj, true).Result;
+            return userAdded;
+        }
+
+        public bool RemoveUserPreference(Stream data)
+        {
+            // convert Stream Data to StreamReader
+            StreamReader reader = new StreamReader(data);
+            // Read StreamReader data as string
+            string jsonString = reader.ReadToEnd();
+            User userObj = JsonConvert.DeserializeObject<User>(jsonString);
+            var userAdded = DocumentDBConnector.UpdateUserPreference(userObj, false).Result;
+            return userAdded;
+        }
+
+
+        public bool CreateCampaign(Stream data)
         {
             try
             {
@@ -65,7 +88,7 @@ namespace DocumentDBDataService
                 string fileName = file.FileName;
                 Stream fileData = file.Data;
 
-                var story = new Story()
+                var story = new Campaign()
                 {
                     OwnerId = parser.Parameters[Constants.OwnerIdKey].Data,
                     Category = parser.Parameters[Constants.CategoryKey].Data,
@@ -76,7 +99,7 @@ namespace DocumentDBDataService
                     IsLocal = parser.Parameters[Constants.IsLocalKey].Data == "true",
                     Heading = parser.Parameters[Constants.HeadingKey].Data,
                     ZipCode = parser.Parameters[Constants.ZipCodeKey].Data,
-                    StoryVisualResource = new StoryMedia()
+                    CampaignVisualResource = new CampaignMedia()
                     {
                         ContentLength = int.Parse(parser.Parameters[Constants.ContentLengthKey].Data),
                         ContentType = parser.Parameters[Constants.ContentTypeKey].Data,
@@ -85,7 +108,7 @@ namespace DocumentDBDataService
                         Data = fileData
                     }
                 };
-                return DocumentDBConnector.CreateStoryInDB(story).Result;
+                return DocumentDBConnector.CreateCampaignInDB(story).Result;
             }
             catch (Exception)
             { }
@@ -103,15 +126,66 @@ namespace DocumentDBDataService
             return null;
         }
 
-        public IEnumerable<DBStory> GetStoriesForUser(string userName)
+        public IEnumerable<DBCampaign> GetCampaignsForUser(string userName)
         {
             try
             {
-                return DocumentDBConnector.GetStoriesForUser(userName);
+                return DocumentDBConnector.GetCampaignsForUser(userName);
             }
             catch (Exception)
             { }
             return null;
+        }
+
+        public IEnumerable<DBCampaign> GetTopFeedsForUser(string userName)
+        {
+            try
+            {
+                return DocumentDBConnector.GetTopFeedsForUser(userName);
+            }
+            catch (Exception)
+            { }
+            return null;
+        }
+
+        public bool AddComment(Stream data)
+        {
+            // convert Stream Data to StreamReader
+            StreamReader reader = new StreamReader(data);
+            // Read StreamReader data as string
+            string jsonString = reader.ReadToEnd();
+            Comment comment = JsonConvert.DeserializeObject<Comment>(jsonString);
+            return DocumentDBConnector.AddComment(comment).Result;
+        }
+
+        public bool DeleteComment(string commentId)
+        {
+            return DocumentDBConnector.DeleteComment(commentId).Result;
+        }
+
+        public bool AddEvent(Stream data)
+        {
+            // convert Stream Data to StreamReader
+            StreamReader reader = new StreamReader(data);
+            // Read StreamReader data as string
+            string jsonString = reader.ReadToEnd();
+            Event evt = JsonConvert.DeserializeObject<Event>(jsonString);
+            return DocumentDBConnector.AddEvent(evt).Result;
+        }
+
+        public bool UpdateEvent(Stream data)
+        {
+            // convert Stream Data to StreamReader
+            StreamReader reader = new StreamReader(data);
+            // Read StreamReader data as string
+            string jsonString = reader.ReadToEnd();
+            Event evt = JsonConvert.DeserializeObject<Event>(jsonString);
+            return DocumentDBConnector.UpdateEvent(evt).Result;
+        }
+
+        public bool DeleteEvent(string eventId)
+        {
+            return DocumentDBConnector.DeleteEvent(eventId).Result;
         }
     }
 }

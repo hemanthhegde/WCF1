@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Owin;
 using TestWebApplication.Models;
+using System.Collections.Generic;
 
 namespace TestWebApplication.Account
 {
@@ -35,10 +36,43 @@ namespace TestWebApplication.Account
             if (!dbCon.CheckUserName(Email.Text))
                 return;
 
-            var user = new User() { DOB = DateOfBirth.Text, Email = Email.Text, Password = Password.Text, DisplayName = DisplayName.Text, Country = Country.Text, ZipCode = ZipCode.Text };
+            var user = new User() { DOB = DateOfBirth.Text, Email = Email.Text, Password = Password.Text, DisplayName = DisplayName.Text, Country = Country.Text, ZipCode = ZipCode.Text,
+            CreatedDate = DateTime.Now.ToString(), Preferences = new UserPreferences() { InterestedLocales = new List<string>() {Country.Text +"/"+ ZipCode.Text}}};
             
             var res = dbCon.CreateUserInDB(user);
         }
+
+        protected void AddUserPreference_Click(object sender, EventArgs e)
+        {
+            UpdateUserPreference(sender, e, true);
+        }
+
+        protected void RemoveUserPreference_Click(object sender, EventArgs e)
+        {
+            UpdateUserPreference(sender, e, false);
+        }
+
+        private void UpdateUserPreference(object sender, EventArgs e, bool isAdd)
+        {
+            var dbCon = new DBConnector();
+            if (dbCon.CheckUserName(Email.Text))
+                return;
+
+            var user = new User()
+            {
+                DOB = DateOfBirth.Text,
+                Email = Email.Text,
+                Password = Password.Text,
+                DisplayName = DisplayName.Text,
+                Country = Country.Text,
+                ZipCode = ZipCode.Text,
+                CreatedDate = DateTime.Now.ToString(),
+                Preferences = new UserPreferences() { InterestedLocales = new List<string>() { Country.Text + "/" + ZipCode.Text } }
+            };
+
+            var res = dbCon.UpdateUserPreference(user, isAdd);
+        }
+
 
         protected void UploadProfilePicture(object sender, EventArgs e)
         {

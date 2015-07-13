@@ -35,7 +35,7 @@ namespace TestWebApplication
             if (string.IsNullOrEmpty(Email.Text))
                 return;
 
-            var res = dbCon.GetStoriesForUser(Email.Text);
+            var res = dbCon.GetCampaignsForUser(Email.Text);
         }
     }
 }

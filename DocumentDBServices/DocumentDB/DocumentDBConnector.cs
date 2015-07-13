@@ -19,9 +19,11 @@ namespace DocumentDBDataService.DocumentDB
     {
         private static string _databaseId = ConfigurationManager.AppSettings["DatabaseId"];
         private static string _usersCollectionId = ConfigurationManager.AppSettings["UsersCollectionId"];
-        private static string _storiesCollectionId = ConfigurationManager.AppSettings["StoriesCollectionId"];
+        private static string _campaignsCollectionId = ConfigurationManager.AppSettings["CampaignsCollectionId"];
+        private static string _commentsCollectionId = ConfigurationManager.AppSettings["CommentsCollectionId"];
+        private static string _eventsCollectionId = ConfigurationManager.AppSettings["EventsCollectionId"];
         private static string _usersStorageUrl = ConfigurationManager.AppSettings["UsersStorageUrl"];
-        private static string _storiesStorageUrl = ConfigurationManager.AppSettings["StoriesStorageUrl"];
+        private static string _campaignsStorageUrl = ConfigurationManager.AppSettings["CampaignsStorageUrl"];
         
         //This property establishes a new connection to DocumentDB the first time it is used, 
         //and then reuses this instance for the duration of the application avoiding the
@@ -77,7 +79,7 @@ namespace DocumentDBDataService.DocumentDB
         //Use the DocumentCollection if it exists, if not create a new Collection
         private static DocumentCollection ReadOrCreateCollection(string databaseLink, string collectionId)
         {
-            var col = Client.CreateDocumentCollectionQuery(databaseLink)
+            DocumentCollection col = Client.CreateDocumentCollectionQuery(databaseLink)
                               .Where(c => c.Id == collectionId)
                               .AsEnumerable()
                               .FirstOrDefault();
@@ -109,17 +111,47 @@ namespace DocumentDBDataService.DocumentDB
         }
 
         //Use the ReadOrCreateCollection function to get a reference to the collection.
-        private static DocumentCollection _storiessCollection;
-        private static DocumentCollection StoriesCollection
+        private static DocumentCollection _campaignsCollection;
+        private static DocumentCollection CampaignCollection
         {
             get
             {
-                if (_storiessCollection == null)
+                if (_campaignsCollection == null)
                 {
-                    _storiessCollection = ReadOrCreateCollection(Database.SelfLink, _storiesCollectionId);
+                    _campaignsCollection = ReadOrCreateCollection(Database.SelfLink, _campaignsCollectionId);
                 }
 
-                return _storiessCollection;
+                return _campaignsCollection;
+            }
+        }
+
+        //Use the ReadOrCreateCollection function to get a reference to the collection.
+        private static DocumentCollection _commentsCollection;
+        private static DocumentCollection CommentsCollection
+        {
+            get
+            {
+                if (_commentsCollection == null)
+                {
+                    _commentsCollection = ReadOrCreateCollection(Database.SelfLink, _commentsCollectionId);
+                }
+
+                return _commentsCollection;
+            }
+        }
+        
+        //Use the ReadOrCreateCollection function to get a reference to the collection.
+        private static DocumentCollection _eventsCollection;
+        private static DocumentCollection EventsCollection
+        {
+            get
+            {
+                if (_eventsCollection == null)
+                {
+                    _eventsCollection = ReadOrCreateCollection(Database.SelfLink, _eventsCollectionId);
+                }
+
+                return _eventsCollection;
             }
         }
 
@@ -140,7 +172,17 @@ namespace DocumentDBDataService.DocumentDB
                 await StorageConnector.UploadUserData(uniqueFileName, userPic.ContentType, userPic.Data);
             }
 
-            DBUser dbUser = new DBUser() { Country= user.Country, DisplayName= user.DisplayName, DOB = user.DisplayName, Email = user.Email, Password = user.Password, ZipCode = user.ZipCode, UserProfilePictureBlob = uniqueFileName };
+            DBUser dbUser = new DBUser() { 
+                Country= user.Country, 
+                DisplayName= user.DisplayName, 
+                DOB = user.DisplayName, 
+                Email = user.Email, 
+                Password = user.Password, 
+                ZipCode = user.ZipCode, 
+                UserProfilePictureBlob = uniqueFileName,
+                CreatedDate = user.CreatedDate,
+                Preferences = user.Preferences
+            };
             var createdUser = await Client.CreateDocumentAsync(UsersCollection.DocumentsLink, dbUser);
 
             if (createdUser == null)
@@ -177,30 +219,62 @@ namespace DocumentDBDataService.DocumentDB
             return true;
         }
 
-        public static async Task<bool> CreateStoryInDB(Story story)
+        // If isAdd is false, its considered as remove.
+        public static async Task<bool> UpdateUserPreference(User user, bool isAdd)
         {
-            var storyMedia = story.StoryVisualResource;
-            if (storyMedia == null || storyMedia.Data == null)
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.Email = \"{0}\") ", user.Email));
+            Document doc = Client.CreateDocumentQuery(UsersCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
+
+            if (doc == null)
                 return false;
 
-            string uniqueFileName = storyMedia.FileName + "_" + Guid.NewGuid();
-            await StorageConnector.UploadStory(uniqueFileName, storyMedia.ContentType, storyMedia.Data);
+            DBUser userDoc;
+            if ((userDoc = JsonConvert.DeserializeObject<DBUser>(doc.ToString())) == null)
+                return false;
 
-            DBStory dbStory = new DBStory()
+            try
             {
-                Country = story.Country,
-                ZipCode = story.ZipCode,
-                Category = story.Category,
-                CreatedDate = story.CreatedDate,
-                Heading = story.Heading,
-                IsLocal = story.IsLocal,
-                KeyWords = story.KeyWords,
-                Message = story.Message,
-                OwnerId = story.OwnerId,
+                if (isAdd)
+                    userDoc.Preferences.InterestedLocales.AddRange(user.Preferences.InterestedLocales);
+                else
+                    foreach (var item in user.Preferences.InterestedLocales)
+                        userDoc.Preferences.InterestedLocales.Remove(item);
+
+                doc.SetPropertyValue(Constants.UserPreferencesKey, userDoc.Preferences);
+                await Client.ReplaceDocumentAsync(doc.SelfLink, doc);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> CreateCampaignInDB(Campaign campaign)
+        {
+            var campaignMedia = campaign.CampaignVisualResource;
+            if (campaignMedia == null || campaignMedia.Data == null)
+                return false;
+
+            string uniqueFileName = campaignMedia.FileName + "_" + Guid.NewGuid();
+            await StorageConnector.UploadStory(uniqueFileName, campaignMedia.ContentType, campaignMedia.Data);
+
+            DBCampaign dbStory = new DBCampaign()
+            {
+                Country = campaign.Country,
+                ZipCode = campaign.ZipCode,
+                Category = campaign.Category,
+                CreatedDate = campaign.CreatedDate,
+                Heading = campaign.Heading,
+                IsLocal = campaign.IsLocal,
+                KeyWords = campaign.KeyWords,
+                Message = campaign.Message,
+                OwnerId = campaign.OwnerId,
                 StoryMediaResourceBlob = uniqueFileName
             };
 
-            var createdStory = await Client.CreateDocumentAsync(StoriesCollection.DocumentsLink, dbStory);
+            var createdStory = await Client.CreateDocumentAsync(CampaignCollection.DocumentsLink, dbStory);
             if (createdStory == null)
                 return false;
 
@@ -219,19 +293,80 @@ namespace DocumentDBDataService.DocumentDB
             return userDoc;
         }
 
-        public static IEnumerable<DBStory> GetStoriesForUser(string userId)
+        public static IEnumerable<DBCampaign> GetCampaignsForUser(string userId)
         {
             SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.OwnerId = \"{0}\") ", userId));
-            List<DBStory> stories = Client.CreateDocumentQuery<DBStory>(StoriesCollection.DocumentsLink, querySpec).AsEnumerable().ToList();
+            List<DBCampaign> campaigns = Client.CreateDocumentQuery<DBCampaign>(CampaignCollection.DocumentsLink, querySpec).AsEnumerable().ToList();
 
-            foreach (var story in stories)
+            foreach (var campaign in campaigns)
             {
-                string blobLink = story.StoryMediaResourceBlob;
+                string blobLink = campaign.StoryMediaResourceBlob;
                 if (!string.IsNullOrEmpty(blobLink) && !string.IsNullOrWhiteSpace(blobLink))
-                    story.StoryMediaResourceBlob = _storiesStorageUrl + blobLink;
+                    campaign.StoryMediaResourceBlob = _campaignsStorageUrl + blobLink;
             }
 
-            return stories;
+            return campaigns;
+        }
+
+        internal static IEnumerable<DBCampaign> GetTopFeedsForUser(string userName)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static async Task<bool> AddComment(Comment comment)
+        {
+            var createdComment = await Client.CreateDocumentAsync(CommentsCollection.DocumentsLink, comment);
+
+            if (createdComment == null)
+                return false;
+
+            return true;
+        }
+
+        internal static async Task<bool> DeleteComment(string commentId)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.id = \"{0}\") ", commentId));
+            Document commentDoc = Client.CreateDocumentQuery(CommentsCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
+
+            if (commentDoc == null)
+                return false;
+
+            var response = await Client.DeleteDocumentAsync(commentDoc.SelfLink);
+            return response.Resource.Id == commentDoc.Id;
+        }
+
+        internal static async Task<bool> AddEvent(Event evt)
+        {
+            var createdComment = await Client.CreateDocumentAsync(EventsCollection.DocumentsLink, evt);
+
+            if (createdComment == null)
+                return false;
+
+            return true;
+        }
+
+        internal static async Task<bool> UpdateEvent(Event evt)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.CampaignId = \"{0}\") ", evt.CampaignId));
+            Document eventDoc = Client.CreateDocumentQuery(EventsCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
+
+            if (eventDoc == null)
+                return false;
+
+            var response = await Client.ReplaceDocumentAsync(eventDoc.SelfLink, evt);
+            return response.Resource.Id == eventDoc.Id;
+        }
+
+        internal static async Task<bool> DeleteEvent(string eventId)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.id = \"{0}\") ", eventId));
+            Document eventDoc = Client.CreateDocumentQuery(EventsCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
+
+            if (eventDoc == null)
+                return false;
+
+            var response = await Client.DeleteDocumentAsync(eventDoc.SelfLink);
+            return response.Resource.Id == eventDoc.Id;
         }
     }
 }

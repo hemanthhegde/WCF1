@@ -72,6 +72,12 @@
             <div class="col-md-offset-2 col-md-10">
                 <asp:Button runat="server" OnClick="CreateUser_Click" Text="Register" CssClass="btn btn-default" />
             </div>
+            <div class="col-md-offset-2 col-md-10">
+                <asp:Button runat="server" OnClick="AddUserPreference_Click" Text="Add Preference" CssClass="btn btn-default" />
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <asp:Button runat="server" OnClick="RemoveUserPreference_Click" Text="Remove Preference" CssClass="btn btn-default" />
+            </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

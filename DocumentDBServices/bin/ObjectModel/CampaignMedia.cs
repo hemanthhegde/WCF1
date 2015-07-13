@@ -6,7 +6,7 @@ using System.Web;
 
 namespace DocumentDBDataService
 {
-    public class StoryMedia
+    public class CampaignMedia
     {
         public string UserId { get; set; }
         public Stream Data { get; set; }

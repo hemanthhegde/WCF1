@@ -376,9 +376,9 @@
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
     <Compile Include="Startup.cs" />
-    <Compile Include="Story.cs" />
-    <Compile Include="UploadProfilePicture.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="DBClasses\Story.cs" />
+    <Compile Include="DBClasses\UploadProfilePicture.cs" />
+    <Compile Include="DBClasses\User.cs" />
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

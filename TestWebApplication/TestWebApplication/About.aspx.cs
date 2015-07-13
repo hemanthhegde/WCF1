@@ -24,7 +24,7 @@ namespace TestWebApplication
             byte[] fileData = new byte[postedFile.ContentLength];
             postedFile.InputStream.Read(fileData, 0, postedFile.ContentLength);
 
-            var story = new Story()
+            var story = new Campaign()
             {
                 Country = Country.Text,
                 ZipCode = ZipCode.Text,
@@ -35,7 +35,7 @@ namespace TestWebApplication
                 IsLocal = IsLocal.SelectedItem.Value == "true",
                 KeyWords = Keywords.Text.Split(',').Select(kw => kw.Trim()).ToArray(),
                 Message = Message.Text,
-                StoryVisualResource = new StoryMedia() { ContentLength = postedFile.ContentLength, ContentType = postedFile.ContentType, Data = fileData, FileName = postedFile.FileName, UserId = OwnerId.Text }
+                StoryVisualResource = new CampaignMedia() { ContentLength = postedFile.ContentLength, ContentType = postedFile.ContentType, Data = fileData, FileName = postedFile.FileName, UserId = OwnerId.Text }
             };
 
             var res = dbCon.CreateStory_MultiPartFormData(story);

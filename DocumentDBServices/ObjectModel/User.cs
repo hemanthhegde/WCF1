@@ -14,6 +14,8 @@ namespace DocumentDBDataService
         public UserPicture ProfilePicture { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+        public string CreatedDate { get; set; }
+        public UserPreferences Preferences { get; set; }
     }
 
     public class DBUser
@@ -25,5 +27,7 @@ namespace DocumentDBDataService
         public string ZipCode { get; set; }
         public string Country { get; set; }
         public string UserProfilePictureBlob { get; set; }
+        public string CreatedDate { get; set; }
+        public UserPreferences Preferences { get; set; }
     }
 }
