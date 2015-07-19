@@ -51,5 +51,6 @@ namespace DocumentDBDataService
     public class DBCampaign : CampaignBase
     {
         public string StoryMediaResourceBlob { get; set; }
+        public string id { get; set; }
     }
 }

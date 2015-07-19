@@ -32,6 +32,11 @@ namespace DocumentDBDataService
             return DocumentDBConnector.IsUserNameAvailable(strUserName);
         }
 
+        public bool DeleteUser(string strUserName)
+        {
+            return DocumentDBConnector.DeleteUser(strUserName).Result;
+        }
+
         public bool UpdateUserPicture(Stream data)
         {
             try
@@ -44,7 +49,7 @@ namespace DocumentDBDataService
                 var userPic = new UserPicture()
                 {
                     UserId = parser.Parameters[Constants.UserIdKey].Data,
-                    ContentLength = int.Parse(parser.Parameters[Constants.ContentLengthKey].Data),
+                    ContentLength = long.Parse(parser.Parameters[Constants.ContentLengthKey].Data),
                     Data = fileData,
                     ContentType = parser.Parameters[Constants.ContentTypeKey].Data,
                     FileName = parser.Parameters[Constants.FileNameKey].Data
@@ -101,7 +106,7 @@ namespace DocumentDBDataService
                     ZipCode = parser.Parameters[Constants.ZipCodeKey].Data,
                     CampaignVisualResource = new CampaignMedia()
                     {
-                        ContentLength = int.Parse(parser.Parameters[Constants.ContentLengthKey].Data),
+                        ContentLength = long.Parse(parser.Parameters[Constants.ContentLengthKey].Data),
                         ContentType = parser.Parameters[Constants.ContentTypeKey].Data,
                         FileName = parser.Parameters[Constants.FileNameKey].Data,
                         UserId = parser.Parameters[Constants.OwnerIdKey].Data,
@@ -179,13 +184,57 @@ namespace DocumentDBDataService
             StreamReader reader = new StreamReader(data);
             // Read StreamReader data as string
             string jsonString = reader.ReadToEnd();
-            Event evt = JsonConvert.DeserializeObject<Event>(jsonString);
+            DBEvent evt = JsonConvert.DeserializeObject<DBEvent>(jsonString);
             return DocumentDBConnector.UpdateEvent(evt).Result;
         }
 
         public bool DeleteEvent(string eventId)
         {
             return DocumentDBConnector.DeleteEvent(eventId).Result;
+        }
+
+        public IEnumerable<DBEvent> GetEventsForUser(string userName)
+        {
+            try
+            {
+                return DocumentDBConnector.GetEventsForUser(userName);
+            }
+            catch (Exception)
+            { }
+            return null;
+        }
+
+        public IEnumerable<DBEvent> GetEventsForCampaign(string campaignId)
+        {
+            try
+            {
+                return DocumentDBConnector.GetEventsForCampaign(campaignId);
+            }
+            catch (Exception)
+            { }
+            return null;
+        }
+
+        public IEnumerable<DBComment> GetCommentsForUser(string userName)
+        {
+            try
+            {
+                return DocumentDBConnector.GetCommentsForUser(userName);
+            }
+            catch (Exception)
+            { }
+            return null;
+        }
+
+        public IEnumerable<DBComment> GetCommentsForCampaign(string campaignId)
+        {
+            try
+            {
+                return DocumentDBConnector.GetCommentsForCampaign(campaignId);
+            }
+            catch (Exception)
+            { }
+            return null;
         }
     }
 }

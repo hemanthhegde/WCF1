@@ -20,6 +20,7 @@ namespace DocumentDBDataService
 
     public class DBUser
     {
+        public string id { get; set; }
         public string DOB { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

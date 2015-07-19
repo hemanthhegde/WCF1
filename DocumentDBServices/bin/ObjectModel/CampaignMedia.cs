@@ -12,6 +12,6 @@ namespace DocumentDBDataService
         public Stream Data { get; set; }
         public string FileName { get; set; }
         public string ContentType { get; set; }
-        public int ContentLength { get; set; }
+        public long ContentLength { get; set; }
     }
 }

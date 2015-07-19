@@ -57,7 +57,6 @@ C:\GitHub\WCF1\WcfService1\bin\zh-Hans\System.Spatial.resources.dll
 C:\GitHub\WCF1\WcfService1\bin\zh-Hant\System.Spatial.resources.dll
 C:\GitHub\WCF1\WcfService1\obj\Debug\WcfService1.dll
 C:\GitHub\WCF1\WcfService1\obj\Debug\WcfService1.pdb
-C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.Data.OData.xml
 C:\GitHub\WCF1\DocumentDBServices\bin\ActiDataService.svc
 C:\GitHub\WCF1\DocumentDBServices\bin\Web.config
 C:\GitHub\WCF1\DocumentDBServices\bin\packages.config
@@ -96,6 +95,7 @@ C:\GitHub\WCF1\DocumentDBServices\bin\System.Net.Http.Formatting.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\System.Spatial.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.Azure.Documents.Client.xml
 C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.Data.Edm.xml
+C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.Data.OData.xml
 C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.Data.Services.Client.xml
 C:\GitHub\WCF1\DocumentDBServices\bin\Microsoft.WindowsAzure.Storage.xml
 C:\GitHub\WCF1\DocumentDBServices\bin\Newtonsoft.Json.xml
@@ -137,6 +137,5 @@ C:\GitHub\WCF1\DocumentDBServices\bin\ko\System.Spatial.resources.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\ru\System.Spatial.resources.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\zh-Hans\System.Spatial.resources.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\zh-Hant\System.Spatial.resources.dll
-C:\GitHub\WCF1\DocumentDBServices\obj\Debug\DocumentDBDataService.csprojResolveAssemblyReference.cache
 C:\GitHub\WCF1\DocumentDBServices\obj\Debug\ActiDataService.dll
 C:\GitHub\WCF1\DocumentDBServices\obj\Debug\ActiDataService.pdb

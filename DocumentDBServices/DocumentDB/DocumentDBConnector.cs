@@ -24,7 +24,7 @@ namespace DocumentDBDataService.DocumentDB
         private static string _eventsCollectionId = ConfigurationManager.AppSettings["EventsCollectionId"];
         private static string _usersStorageUrl = ConfigurationManager.AppSettings["UsersStorageUrl"];
         private static string _campaignsStorageUrl = ConfigurationManager.AppSettings["CampaignsStorageUrl"];
-        
+
         //This property establishes a new connection to DocumentDB the first time it is used, 
         //and then reuses this instance for the duration of the application avoiding the
         //overhead of instantiating a new instance of DocumentClient with each request
@@ -139,7 +139,7 @@ namespace DocumentDBDataService.DocumentDB
                 return _commentsCollection;
             }
         }
-        
+
         //Use the ReadOrCreateCollection function to get a reference to the collection.
         private static DocumentCollection _eventsCollection;
         private static DocumentCollection EventsCollection
@@ -167,18 +167,19 @@ namespace DocumentDBDataService.DocumentDB
             var userPic = user.ProfilePicture;
             string uniqueFileName = "";
             if (userPic != null)
-            {                
+            {
                 uniqueFileName = userPic.FileName + "_" + Guid.NewGuid();
                 await StorageConnector.UploadUserData(uniqueFileName, userPic.ContentType, userPic.Data);
             }
 
-            DBUser dbUser = new DBUser() { 
-                Country= user.Country, 
-                DisplayName= user.DisplayName, 
-                DOB = user.DisplayName, 
-                Email = user.Email, 
-                Password = user.Password, 
-                ZipCode = user.ZipCode, 
+            DBUser dbUser = new DBUser()
+            {
+                Country = user.Country,
+                DisplayName = user.DisplayName,
+                DOB = user.DOB,
+                Email = user.Email,
+                Password = user.Password,
+                ZipCode = user.ZipCode,
                 UserProfilePictureBlob = uniqueFileName,
                 CreatedDate = user.CreatedDate,
                 Preferences = user.Preferences
@@ -310,13 +311,27 @@ namespace DocumentDBDataService.DocumentDB
 
         internal static IEnumerable<DBCampaign> GetTopFeedsForUser(string userName)
         {
-            throw new NotImplementedException();
+            DBUser user = GetUser(userName);
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.ZipCode = \"{0}\") ", user.ZipCode));
+            List<DBCampaign> campaigns = Client.CreateDocumentQuery<DBCampaign>(CampaignCollection.DocumentsLink, querySpec).AsEnumerable().ToList();
+
+            foreach (var campaign in campaigns)
+            {
+                string blobLink = campaign.StoryMediaResourceBlob;
+                if (!string.IsNullOrEmpty(blobLink) && !string.IsNullOrWhiteSpace(blobLink))
+                    campaign.StoryMediaResourceBlob = _campaignsStorageUrl + blobLink;
+            }
+
+            return campaigns;
         }
 
         internal static async Task<bool> AddComment(Comment comment)
         {
             var createdComment = await Client.CreateDocumentAsync(CommentsCollection.DocumentsLink, comment);
 
+            // Currently this just adds the comment. but in reality, the moment you add the comment correcponding 
+            // Campaign's comment count and the replyComment count (is this is a reply to a comment) should be incremented.
+            // this can be accomplished by stored procedures which the documentDB supports. Need to investigate on that.
             if (createdComment == null)
                 return false;
 
@@ -328,11 +343,19 @@ namespace DocumentDBDataService.DocumentDB
             SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.id = \"{0}\") ", commentId));
             Document commentDoc = Client.CreateDocumentQuery(CommentsCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
 
+            // Similarly delete Comment Should update all the comment count in events and delete all the replies to the comment.
             if (commentDoc == null)
                 return false;
 
-            var response = await Client.DeleteDocumentAsync(commentDoc.SelfLink);
-            return response.Resource.Id == commentDoc.Id;
+            try
+            {
+                await Client.DeleteDocumentAsync(commentDoc.SelfLink);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         internal static async Task<bool> AddEvent(Event evt)
@@ -345,7 +368,7 @@ namespace DocumentDBDataService.DocumentDB
             return true;
         }
 
-        internal static async Task<bool> UpdateEvent(Event evt)
+        internal static async Task<bool> UpdateEvent(DBEvent evt)
         {
             SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.CampaignId = \"{0}\") ", evt.CampaignId));
             Document eventDoc = Client.CreateDocumentQuery(EventsCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
@@ -353,8 +376,16 @@ namespace DocumentDBDataService.DocumentDB
             if (eventDoc == null)
                 return false;
 
-            var response = await Client.ReplaceDocumentAsync(eventDoc.SelfLink, evt);
-            return response.Resource.Id == eventDoc.Id;
+            try
+            {
+                // We need to pass in DBEvent here because 'id' is a required property for the method below and Event class doesnt have that method.
+                await Client.ReplaceDocumentAsync(eventDoc.SelfLink, evt);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         internal static async Task<bool> DeleteEvent(string eventId)
@@ -365,8 +396,57 @@ namespace DocumentDBDataService.DocumentDB
             if (eventDoc == null)
                 return false;
 
-            var response = await Client.DeleteDocumentAsync(eventDoc.SelfLink);
-            return response.Resource.Id == eventDoc.Id;
+            try
+            {
+                await Client.DeleteDocumentAsync(eventDoc.SelfLink);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        internal static IEnumerable<DBEvent> GetEventsForUser(string userName)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.OwnerId = \"{0}\") ", userName));
+            return Client.CreateDocumentQuery<DBEvent>(EventsCollection.DocumentsLink, querySpec).AsEnumerable();
+        }
+
+        internal static IEnumerable<DBEvent> GetEventsForCampaign(string campaignId)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.CampaignId = \"{0}\") ", campaignId));
+            return Client.CreateDocumentQuery<DBEvent>(EventsCollection.DocumentsLink, querySpec).AsEnumerable();
+        }
+
+        internal static IEnumerable<DBComment> GetCommentsForUser(string userName)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.OwnerId = \"{0}\") ", userName));
+            return Client.CreateDocumentQuery<DBComment>(CommentsCollection.DocumentsLink, querySpec).AsEnumerable();
+        }
+
+        internal static IEnumerable<DBComment> GetCommentsForCampaign(string campaignId)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.CampaignId = \"{0}\") ", campaignId));
+            return Client.CreateDocumentQuery<DBComment>(CommentsCollection.DocumentsLink, querySpec).AsEnumerable();
+        }
+
+        internal static async Task<bool> DeleteUser(string strUserName)
+        {
+            SqlQuerySpec querySpec = new SqlQuerySpec(string.Format("SELECT * FROM root WHERE (root.Email = \"{0}\") ", strUserName));
+            Document doc = Client.CreateDocumentQuery(UsersCollection.DocumentsLink, querySpec).AsEnumerable().FirstOrDefault();
+
+            if (doc == null)
+                return false;
+            try
+            {
+                var response = await Client.DeleteDocumentAsync(doc.SelfLink);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

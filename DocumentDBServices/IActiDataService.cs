@@ -25,6 +25,10 @@ namespace DocumentDBDataService
         [WebGet(UriTemplate = "IsUserNameAvailable/userName/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         bool IsUserNameAvailable(string name);
 
+        [OperationContract(Name = "DeleteUser")]
+        [WebGet(UriTemplate = "DeleteUser/userName/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        bool DeleteUser(string name);
+
         [OperationContract(Name = "UpdateUserPicture")]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "UpdateUserPicture")]
         bool UpdateUserPicture(Stream data);
@@ -94,5 +98,21 @@ namespace DocumentDBDataService
         [OperationContract(Name = "DeleteEvent")]
         [WebGet(UriTemplate = "DeleteEvent/eventId/{eventId}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         bool DeleteEvent(string eventId);
+
+        [OperationContract(Name = "GetEventsForUser")]
+        [WebGet(UriTemplate = "GetEventsForUser/userName/{userName}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IEnumerable<DBEvent> GetEventsForUser(string userName);
+
+        [OperationContract(Name = "GetEventsForCampaign")]
+        [WebGet(UriTemplate = "GetEventsForCampaign/campaignId/{campaignId}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IEnumerable<DBEvent> GetEventsForCampaign(string campaignId);
+
+        [OperationContract(Name = "GetCommentsForUser")]
+        [WebGet(UriTemplate = "GetCommentsForUser/userName/{userName}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IEnumerable<DBComment> GetCommentsForUser(string userName);
+
+        [OperationContract(Name = "GetCommentsForCampaign")]
+        [WebGet(UriTemplate = "GetCommentsForCampaign/campaignId/{campaignId}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IEnumerable<DBComment> GetCommentsForCampaign(string campaignId);
     }
 }

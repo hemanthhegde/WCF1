@@ -18,4 +18,9 @@ namespace DocumentDBDataService
         public string[] KeyWords { get; set; }
         public int ReplyCount { get; set; }
     }
+
+    public class DBComment : Comment
+    {
+        public string id { get; set; }
+    }
 }
