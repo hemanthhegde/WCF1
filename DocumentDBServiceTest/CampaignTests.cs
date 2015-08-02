@@ -23,7 +23,7 @@ namespace DocumentDBServiceTest
                 CreatedDate = DateTime.Now.ToString(),
                 DisplayName = "Hemanth",
                 DOB = DateTime.Parse("1/1/1984").ToString(),
-                Email = "hemanth@gmail.com",
+                Email = "hemhedge@gmail.com",
                 Password = "xzssddddd",
                 ZipCode = "98007",
                 Preferences = new UserPreferences() { InterestedLocales = new List<string>() { "US/98007", "US/98052", "IN/577005" } }
@@ -41,12 +41,14 @@ namespace DocumentDBServiceTest
                 Country = "US",
                 ZipCode = "98007",
                 CreatedDate = DateTime.Now.ToString(),
+                LastUpdatedDate = DateTime.Now.ToString(),
                 OwnerId = dbUser.Email,
                 Heading = "Why Capitalism and Democracy have failed us.",
                 Category = CampaignCategory.Political.ToString(),
                 IsLocal = true,
                 KeyWords = new string[3] {"Political","Capitalism","Democracy"},
                 Message = "Here I explain why they fail us and what we can do to achieve that ideal society.",
+                Status = CampaignStatus.Active.ToString(),
             };
 
             TestCampaignMedia cm = new TestCampaignMedia() { UserId = dbUser.id };
@@ -61,6 +63,7 @@ namespace DocumentDBServiceTest
             Dictionary<string, object> postParameters = new Dictionary<string, object>();
             postParameters.Add("OwnerId", story.OwnerId);
             postParameters.Add("CreatedDate", story.CreatedDate);
+            postParameters.Add("LastUpdatedDate", story.LastUpdatedDate);
             postParameters.Add("Heading", story.Heading);
             postParameters.Add("Category", story.Category);
             postParameters.Add("Message", story.Message);
@@ -71,6 +74,7 @@ namespace DocumentDBServiceTest
             postParameters.Add("FileName", cm.FileName);
             postParameters.Add("ContentType", cm.ContentType);
             postParameters.Add("ContentLength", cm.ContentLength);
+            postParameters.Add("Status", story.Status);
             postParameters.Add("File", new FormUpload.FileParameter(cm.Data, cm.FileName, cm.ContentType));
 
             Assert.IsTrue(_theService.CreateCampaign(new MemoryStream(FormUpload.MultipartFormDataPost(postParameters))));

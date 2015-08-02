@@ -139,3 +139,4 @@ C:\GitHub\WCF1\DocumentDBServices\bin\zh-Hans\System.Spatial.resources.dll
 C:\GitHub\WCF1\DocumentDBServices\bin\zh-Hant\System.Spatial.resources.dll
 C:\GitHub\WCF1\DocumentDBServices\obj\Debug\ActiDataService.dll
 C:\GitHub\WCF1\DocumentDBServices\obj\Debug\ActiDataService.pdb
+C:\GitHub\WCF1\DocumentDBServices\obj\Debug\DocumentDBDataService.csprojResolveAssemblyReference.cache
